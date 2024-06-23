@@ -48,6 +48,22 @@ async function run() {
             res.send(result);
         });
 
+        app.get("/services/provider/:email", async (req, res) => {
+            const email = req.params.email;
+            const services = await servicesCollection.find({ providerEmail: email }).toArray();
+            res.send(services);
+        });
+
+        // Delete service
+        app.delete("/services/:id", async (req, res) => {
+            const id = req.params.id;
+            const result = await servicesCollection.deleteOne({ _id: new ObjectId(id) });
+
+            if (result.deletedCount === 1) {
+                res.send(result);
+            }
+        });
+
         // Book a service
         app.post("/book-service", async (req, res) => {
             const serviceData = req.body;
@@ -58,7 +74,7 @@ async function run() {
         // Fetch booked services by user email
         app.get("/booked-services/:email", async (req, res) => {
             const email = req.params.email;
-            const bookedServices = await bookedServicesCollection.find({ email: email }).toArray();
+            const bookedServices = await bookedServicesCollection.find({ userEmail: email }).toArray();
             res.send(bookedServices);
         });
 
