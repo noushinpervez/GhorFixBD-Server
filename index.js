@@ -48,10 +48,29 @@ async function run() {
             res.send(result);
         });
 
+        // Fetch services by email
         app.get("/services/provider/:email", async (req, res) => {
             const email = req.params.email;
             const services = await servicesCollection.find({ providerEmail: email }).toArray();
             res.send(services);
+        });
+
+        // Update service
+        app.put("/update-service/:id", async (req, res) => {
+            const query = { _id: new ObjectId(req.params.id) };
+            const options = { upsert: true };
+
+            const data = {
+                $set: {
+                    serviceName: req.body.serviceName,
+                    price: req.body.price,
+                    serviceArea: req.body.serviceArea,
+                    description: req.body.description,
+                }
+            };
+
+            const result = await servicesCollection.updateOne(query, data, options);
+            res.send(result);
         });
 
         // Delete service
