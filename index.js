@@ -27,6 +27,7 @@ async function run() {
         // await client.connect();
 
         const servicesCollection = client.db("homeRepairServiceDB").collection("services");
+        const bookedServicesCollection = client.db("homeRepairServiceDB").collection("bookedServices");
 
         // Fetch services
         app.get("/services", async (req, res) => {
@@ -38,6 +39,19 @@ async function run() {
         app.post("/add-service", async (req, res) => {
             const serviceData = req.body;
             const result = await servicesCollection.insertOne(serviceData);
+            res.send(result);
+        });
+
+        // Fetch services by id
+        app.get("/services/:id", async (req, res) => {
+            const result = await servicesCollection.findOne({ _id: new ObjectId(req.params.id) });
+            res.send(result);
+        });
+
+        // Book a service
+        app.post("/book-service", async (req, res) => {
+            const serviceData = req.body;
+            const result = await bookedServicesCollection.insertOne(serviceData);
             res.send(result);
         });
 
