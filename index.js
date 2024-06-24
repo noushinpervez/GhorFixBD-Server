@@ -97,6 +97,23 @@ async function run() {
             res.send(bookedServices);
         });
 
+        // Fetch booked services by provider email
+        app.get("/booked-services/provider/:email", async (req, res) => {
+            const email = req.params.email;
+            const bookedServices = await bookedServicesCollection.find({ providerEmail: email }).toArray();
+            res.send(bookedServices);
+        });
+
+        // Update booked service status
+        app.put("/booked-services/:id/update-status", async (req, res) => {
+            const id = req.params.id;
+            const result = await bookedServicesCollection.updateOne(
+                { _id: new ObjectId(id) },
+                { $set: { status: req.body.status } }
+            );
+            res.send(result);
+        });
+
         // Send a ping to confirm a successful connection
         // await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
